@@ -9,6 +9,10 @@
     <canvas id="myCanvas"></canvas>
     <div id="controls">
       <button onClick="addRandomPoint()">Add Point</button>
+      <button onClick="addRandomSegment()">Add Segment</button>
+      <button onClick="removeRandomSegment()">Remove Segment</button>
+      <button onClick="removeRandomPoint()">Remove Point</button>
+      <button onClick="removeAll()">Remove All</button>
     </div>
 
     <!-- implementation of graph will be in a separate JS file -->
@@ -16,6 +20,45 @@
     <script src="js/primitives/point.js"></script>
     <script src="js/primitives/segment.js"></script>
     <script>
+      function removeAll() {
+        graph.dispose();
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        graph.draw(ctx);
+      }
+
+      function removeRandomPoint() {
+        if (graph.points.length == 0) {
+          console.log("no points");
+          return;
+        }
+        const index = Math.floor(Math.random() * graph.points.length);
+        graph.removePoint(graph.points[index]);
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        graph.draw(ctx);
+      }
+
+      function removeRandomSegment() {
+        if (graph.segments.length == 0) {
+          console.log("no segments");
+          return;
+        }
+        const index = Math.floor(Math.random() * graph.segments.length);
+        graph.removeSegment(graph.segments[index]);
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        graph.draw(ctx);
+      }
+
+      function addRandomSegment() {
+        const index1 = Math.floor(Math.random() * graph.points.length);
+        const index2 = Math.floor(Math.random() * graph.points.length);
+        const success = graph.tryAddSegment(
+          new Segment(graph.points[index1], graph.points[index2])
+        );
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        graph.draw(ctx);
+        console.log(success);
+      }
+
       function addRandomPoint() {
         const success = graph.tryAddPoint(
           new Point(
