@@ -18,8 +18,22 @@ class Viewport {
     this.#addEventListeners();
   }
 
-  getMouse(evt) {
-    return new Point(evt.offsetX * this.zoom, evt.offsetY * this.zoom);
+  reset() {
+    this.ctx.restore();
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.save();
+    this.ctx.translate(this.center.x, this.center.y);
+    this.ctx.scale(1 / this.zoom, 1 / this.zoom);
+    const offset = this.getOffset();
+    this.ctx.translate(offset.x, offset.y);
+  }
+
+  getMouse(evt, subtractPanOffset = false) {
+    const p = new Point(
+      (evt.offsetX - this.center.x) * this.zoom - this.offset.x,
+      (evt.offsetY - this.center.y) * this.zoom - this.offset.y
+    );
+    return subtractPanOffset ? subtract(p, this.pan.offset) : p;
   }
 
   getOffset() {
